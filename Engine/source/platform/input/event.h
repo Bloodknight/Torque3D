@@ -258,10 +258,10 @@ enum InputObjectInstancesEnum
    SI_POVMASK2       = 0x219,
 
    /// Trackball event codes.
-   SI_XBALL          = 0x21A,
-   SI_YBALL          = 0x21B,
-   SI_XBALL2         = 0x21C,
-   SI_YBALL2         = 0x21D,
+   //SI_XBALL          = 0x21A,
+   //SI_YBALL          = 0x21B,
+   //SI_XBALL2         = 0x21C,
+   //SI_YBALL2         = 0x21D,
 
    /// Trackball event codes.
    SI_XBALL          = 0x21A,
