@@ -366,7 +366,7 @@ void PlatformWindowManagerSDL::_process()
          {
             if (Con::isFunction("onDropEnd"))
                Con::executef("onDropEnd");
-               break;
+            break;
          }
 
          default:
@@ -504,10 +504,12 @@ void InitWindowingSystem()
 
 AFTER_MODULE_INIT(gfx)
 {
+#if !defined(TORQUE_DEDICATED)
    int res = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC | SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS | SDL_INIT_NOPARACHUTE);
    AssertFatal(res != -1, avar("SDL error:%s", SDL_GetError()));
 
    // By default, SDL enables text input. We disable it on initialization, and
    // we will enable it whenever the time is right.
    SDL_StopTextInput();
+#endif
 }

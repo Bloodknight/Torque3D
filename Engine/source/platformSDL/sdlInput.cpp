@@ -82,6 +82,8 @@ void Input::init()
    Process::notify(Input::process, PROCESS_INPUT_ORDER);
 
 }
+
+//------------------------------------------------------------------------------
 U16 Input::getKeyCode( U16 asciiCode )
 {
     if( asciiCode > 255 )

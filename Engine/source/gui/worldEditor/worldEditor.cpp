@@ -51,6 +51,8 @@
 
 #include "tools/editorTool.h"
 
+#include "T3D/Scene.h"
+
 IMPLEMENT_CONOBJECT( WorldEditor );
 
 ConsoleDocClass( WorldEditor,
@@ -455,19 +457,20 @@ bool WorldEditor::pasteSelection( bool dropSel )
       return false;           
    }
 
-   SimGroup *missionGroup = NULL;   
+   SimGroup *targetGroup = NULL;   
    if( isMethod( "getNewObjectGroup" ) )
    {
       const char* targetGroupName = Con::executef( this, "getNewObjectGroup" );
-      if( targetGroupName && targetGroupName[ 0 ] && !Sim::findObject( targetGroupName, missionGroup ) )
+      if( targetGroupName && targetGroupName[ 0 ] && !Sim::findObject( targetGroupName, targetGroup) )
          Con::errorf( "WorldEditor::pasteSelection() - no SimGroup called '%s'", targetGroupName );
    }
 
-   if( !missionGroup )
+   if( !targetGroup)
    {
-      if( !Sim::findObject( "MissionGroup", missionGroup ) )
+      targetGroup = Scene::getRootScene();
+      if( !targetGroup)
       {
-         Con::errorf( "WorldEditor::pasteSelection() - MissionGroup not found" );
+         Con::errorf( "WorldEditor::pasteSelection() - Scene not found" );
          return false;
       }
    }
@@ -481,8 +484,8 @@ bool WorldEditor::pasteSelection( bool dropSel )
       if ( !obj )
          continue;
 
-      if ( missionGroup )
-         missionGroup->addObject( obj );
+      if (targetGroup)
+         targetGroup->addObject( obj );
 
       action->addObject( obj );
 
@@ -594,7 +597,7 @@ void WorldEditor::hideObject(SceneObject* serverObj, bool hide)
 
 void WorldEditor::hideSelection(bool hide)
 {
-   SimGroup* pGroup = dynamic_cast<SimGroup*>(Sim::findObject("MissionGroup"));
+   Scene* scene = Scene::getRootScene();
 
    // set server/client objects hide field
    for(U32 i = 0; i < mSelected->size(); i++)
@@ -605,7 +608,7 @@ void WorldEditor::hideSelection(bool hide)
 
       // Prevent non-mission group objects (i.e. Player) from being hidden.
       // Otherwise it is difficult to show them again.
-      if(!serverObj->isChildOfGroup(pGroup))
+      if(!serverObj->isChildOfGroup(scene))
          continue;
 
       hideObject(serverObj, hide);
@@ -816,6 +819,21 @@ void WorldEditor::terrainSnapSelection(Selection* sel, U8 modifier, Point3F gizm
    {
       mStuckToGround = true;
 
+      const F32 OffsetZValueMin = 0.01f;
+
+      if (mTerrainSnapOffsetZ)
+      {
+         if (mOffsetZValue == 0.0f)
+         {
+            ri.point.z += OffsetZValueMin;
+         }
+         else
+         {
+            ri.point.z += mOffsetZValue;
+         }
+         
+      }
+      
       sel->offset(ri.point - centroid, (!mUseGroupCenter && mGridSnap) ? mGridPlaneSize : 0.f);
 
       if(mTerrainSnapAlignment != AlignNone)
@@ -1795,6 +1813,9 @@ WorldEditor::WorldEditor()
    mStickToGround = false;
    mStuckToGround = false;
    mTerrainSnapAlignment = AlignNone;
+   mTerrainSnapOffsetZ = false;
+   mOffsetZValue = 0.0f;
+
    mDropAtBounds = false;
    mDropBelowCameraOffset = 15.0f;
    mDropAtScreenCenterScalar = 1.0f;
@@ -2437,7 +2458,7 @@ void WorldEditor::renderScene( const RectI &updateRect )
    }
 
    // Render the paths
-   renderPaths(Sim::findObject("MissionGroup"));
+   renderPaths(Scene::getRootScene());
 
    // walk selected
    Selection* selection = getActiveSelectionSet();
@@ -2788,6 +2809,8 @@ void WorldEditor::initPersistFields()
 
       addField( "isDirty",                TypeBool,   Offset(mIsDirty, WorldEditor) );
       addField( "stickToGround",          TypeBool,   Offset(mStickToGround, WorldEditor) );
+      addField("TerrainSnapOffsetZ",      TypeBool,   Offset(mTerrainSnapOffsetZ, WorldEditor));
+      addField("OffsetZValue",            TypeF32,    Offset(mOffsetZValue, WorldEditor));
       //addField("sameScaleAllAxis", TypeBool, Offset(mSameScaleAllAxis, WorldEditor));
       addField( "toggleIgnoreList",       TypeBool,   Offset(mToggleIgnoreList, WorldEditor) );
 
@@ -3653,10 +3676,10 @@ void WorldEditor::makeSelectionPrefab( const char *filename )
       return;
    }
 
-   SimGroup *missionGroup;
-   if ( !Sim::findObject( "MissionGroup", missionGroup ) )
+   Scene* scene = Scene::getRootScene();
+   if ( !scene)
    {
-      Con::errorf( "WorldEditor::makeSelectionPrefab - Could not find MissionGroup." );
+      Con::errorf( "WorldEditor::makeSelectionPrefab - Could not find root Scene." );
       return;
    }
 
@@ -3746,7 +3769,7 @@ void WorldEditor::makeSelectionPrefab( const char *filename )
    fabMat.inverse();
    fab->setTransform( fabMat );
    fab->registerObject();
-   missionGroup->addObject( fab );
+   scene->addObject( fab );
 
    // Select it, mark level as dirty.
    clearSelection();
@@ -3812,10 +3835,10 @@ void WorldEditor::makeSelectionAMesh(const char *filename)
       return;
    }
 
-   SimGroup *missionGroup;
-   if (!Sim::findObject("MissionGroup", missionGroup))
+   Scene* scene = Scene::getRootScene();
+   if (!scene)
    {
-      Con::errorf("WorldEditor::makeSelectionAMesh - Could not find MissionGroup.");
+      Con::errorf("WorldEditor::makeSelectionAMesh - Could not find root Scene.");
       return;
    }
 
@@ -3877,8 +3900,6 @@ void WorldEditor::makeSelectionAMesh(const char *filename)
    fabMat.inverse();
 
    MatrixF objMat;
-   SimObject *obj = NULL;
-   SceneObject *sObj = NULL;
 
    Vector< SceneObject* > objectList;
 
@@ -3967,7 +3988,7 @@ void WorldEditor::makeSelectionAMesh(const char *filename)
    fabMat.inverse();
    ts->setTransform(fabMat);
    ts->registerObject();
-   missionGroup->addObject(ts);
+   scene->addObject(ts);
 
    // Select it, mark level as dirty.
    clearSelection();

@@ -263,6 +263,12 @@ enum InputObjectInstancesEnum
    SI_XBALL2         = 0x21C,
    SI_YBALL2         = 0x21D,
 
+   /// Trackball event codes.
+   SI_XBALL          = 0x21A,
+   SI_YBALL          = 0x21B,
+   SI_XBALL2         = 0x21C,
+   SI_YBALL2         = 0x21D,
+
    /// Gamepad button event codes.
    XI_CONNECT        = 0x300,
    XI_THUMBLX        = 0x301,
@@ -272,6 +278,10 @@ enum InputObjectInstancesEnum
    XI_LEFT_TRIGGER   = 0x305,
    XI_RIGHT_TRIGGER  = 0x306,
 
+   /*XI_DPAD_UP        = 0x307,
+   XI_DPAD_DOWN      = 0x308,
+   XI_DPAD_LEFT      = 0x309,
+   XI_DPAD_RIGHT     = 0x310,*/
 
    XI_START          = 0x311,
    XI_BACK           = 0x312,

@@ -74,9 +74,9 @@ EndImplementEnumType;
 
 //-----------------------------------------------------------------------------
 
-String TSShapeConstructor::smCapsuleShapePath("core/art/shapes/unit_capsule.dts");
-String TSShapeConstructor::smCubeShapePath("core/art/shapes/unit_cube.dts");
-String TSShapeConstructor::smSphereShapePath("core/art/shapes/unit_sphere.dts");
+String TSShapeConstructor::smCapsuleShapePath("tools/shapes/unit_capsule.dts");
+String TSShapeConstructor::smCubeShapePath("tools/shapes/unit_cube.dts");
+String TSShapeConstructor::smSphereShapePath("tools/shapes/unit_sphere.dts");
 
 ResourceRegisterPostLoadSignal< TSShape > TSShapeConstructor::_smAutoLoad( &TSShapeConstructor::_onTSShapeLoaded );
 ResourceRegisterUnloadSignal< TSShape > TSShapeConstructor::_smAutoUnload( &TSShapeConstructor::_onTSShapeUnloaded );
@@ -144,6 +144,7 @@ TSShapeConstructor::TSShapeConstructor()
    mOptions.neverImport = String(Con::getVariable("$TSShapeConstructor::neverImport"));
    mOptions.alwaysImportMesh = "";
    mOptions.neverImportMesh = String(Con::getVariable("$TSShapeConstructor::neverImportMesh"));
+   mOptions.neverImportMat = String(Con::getVariable("$TSShapeConstructor::neverImportMat"));
    mOptions.ignoreNodeScale = false;
    mOptions.adjustCenter = false;
    mOptions.adjustFloor = false;
@@ -265,6 +266,13 @@ void TSShapeConstructor::initPersistFields()
       "match mesh names. Any mesh that matches one of the patterns in the list will "
       "not be imported (unless it matches the alwaysImportMesh list.\n"
       "@see alwaysImportMesh" );
+
+   addField("neverImportMat", TypeRealString, Offset(mOptions.neverImportMat, TSShapeConstructor),
+      "TAB separated patterns of materials to ignore on loading. No effect for DTS files.\n"
+      "Torque allows unwanted materials in COLLADA (.dae) files to to be ignored "
+      "during import. This field contains a TAB separated list of patterns to "
+      "match material names. Any material that matches one of the patterns in the list will "
+      "not be imported");
 
    addField( "ignoreNodeScale", TypeBool, Offset(mOptions.ignoreNodeScale, TSShapeConstructor),
       "Ignore <scale> elements inside COLLADA <node>s. No effect for DTS files.\n"
