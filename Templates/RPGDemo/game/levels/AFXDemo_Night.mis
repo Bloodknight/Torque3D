@@ -1,5 +1,5 @@
 //--- OBJECT WRITE BEGIN ---
-new SimGroup(MissionGroup) {
+new Scene(MissionGroup) {
    new LevelInfo(theLevelInfo) {
       levelName = "Dead of Night";
       desc0 = "A moon lit night mission.<br>" @

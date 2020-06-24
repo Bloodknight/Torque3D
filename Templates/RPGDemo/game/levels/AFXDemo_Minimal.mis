@@ -1,5 +1,5 @@
 //--- OBJECT WRITE BEGIN ---
-new SimGroup(MissionGroup) {
+new Scene(MissionGroup) {
    new LevelInfo(theLevelInfo) {
       levelName = "Minimal Mission";
       desc0 = "A lightweight daytime level without buildings or water.<br>" @

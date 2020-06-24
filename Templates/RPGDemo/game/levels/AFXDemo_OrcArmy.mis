@@ -1,5 +1,5 @@
 //--- OBJECT WRITE BEGIN ---
-new SimGroup(MissionGroup) {
+new Scene(MissionGroup) {
    new LevelInfo(theLevelInfo) {
       levelName = "Orc Army Bivouac";
       desc0 = "A lightweight daytime level with lots of orcs running around.<br>" @

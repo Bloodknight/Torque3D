@@ -1,5 +1,5 @@
 //--- OBJECT WRITE BEGIN ---
-new SimGroup(MissionGroup) {
+new Scene(MissionGroup) {
    new LevelInfo(theLevelInfo) {
       levelName = "Wasteland";
       desc0 = "A desolate mission in a raging sandstorm.<br>" @

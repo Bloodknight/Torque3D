@@ -1,5 +1,5 @@
 //--- OBJECT WRITE BEGIN ---
-new SimGroup(MissionGroup) {
+new Scene(MissionGroup) {
    new LevelInfo(theLevelInfo) {
       levelName = "Vacant Space";
       desc0 = "A totally empty level.<br>" @

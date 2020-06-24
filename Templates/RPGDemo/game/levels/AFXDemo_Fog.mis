@@ -1,5 +1,5 @@
 //--- OBJECT WRITE BEGIN ---
-new SimGroup(MissionGroup) {
+new Scene(MissionGroup) {
    new LevelInfo(theLevelInfo) {
       LevelName = "Velvet Fog";
       desc0 = "A murky mission with a polysoup station structure and dense fog.<br>" @
